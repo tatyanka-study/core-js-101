@@ -396,8 +396,21 @@ function isBracketsBalanced(str) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  if (n < 2 || n > 10) {
+    throw new Error('Base must be between 2 and 10');
+  }
+  if (num === 0) {
+    return 0;
+  }
+  let result = '';
+  let currentNum = num;
+  while (currentNum > 0) {
+    const remainder = currentNum % n;
+    result = remainder.toString() + result;
+    currentNum = Math.floor(currentNum / n);
+  }
+  return result;
 }
 
 
@@ -413,8 +426,20 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const parts = pathes[0].split('/');
+  let commonPath = '';
+
+  for (let i = 0; i < parts.length; i += 1) {
+    const currentPart = parts[i];
+    if (pathes.every((path) => path.split('/')[i] === currentPart)) {
+      commonPath += `${currentPart}/`;
+    } else {
+      break;
+    }
+  }
+
+  return commonPath;
 }
 
 
@@ -436,10 +461,27 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
-}
+function getMatrixProduct(m1, m2) {
+  const rows1 = m1.length;
+  const cols1 = m1[0].length;
+  const cols2 = m2[0].length;
 
+  if (cols1 !== m2.length) {
+    throw new Error('Кількість стовпців у першій матриці повинна дорівнювати кількості рядків у другій матриці.');
+  }
+
+  const result = Array.from({ length: rows1 }, () => Array(cols2).fill(0));
+
+  m1.forEach((row, i) => {
+    m2[0].forEach((_, j) => {
+      for (let k = 0; k < cols1; k += 1) {
+        result[i][j] += row[k] * m2[k][j];
+      }
+    });
+  });
+
+  return result;
+}
 
 /**
  * Returns the evaluation of the specified tic-tac-toe position.
@@ -471,11 +513,25 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const winningCombos = [
+    // Rows
+    [position[0][0], position[0][1], position[0][2]],
+    [position[1][0], position[1][1], position[1][2]],
+    [position[2][0], position[2][1], position[2][2]],
+    // Columns
+    [position[0][0], position[1][0], position[2][0]],
+    [position[0][1], position[1][1], position[2][1]],
+    [position[0][2], position[1][2], position[2][2]],
+    // Diagonals
+    [position[0][0], position[1][1], position[2][2]],
+    [position[0][2], position[1][1], position[2][0]],
+  ];
+
+  const winner = winningCombos.find((combo) => combo.every((cell) => cell === 'X') || combo.every((cell) => cell === '0'));
+
+  return winner ? winner[0] : undefined;
 }
-
-
 module.exports = {
   getFizzBuzz,
   getFactorial,
